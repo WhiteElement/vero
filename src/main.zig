@@ -1,5 +1,6 @@
 const std = @import("std");
 const assert = @import("./assert.zig").assert;
+const Csv = @import("./Csv/Csv.zig");
 
 const inputErrors = error{
     NoFilePassed,
@@ -7,9 +8,12 @@ const inputErrors = error{
 
 pub fn main() !void {
     const fileInput = try fileNameFromArgs();
-    std.log.info("Trying to Parse {any}", .{fileInput});
+    std.log.info("Trying to Parse {s}", .{fileInput});
 
-    _ = try loadFile(fileInput);
+    const file = try loadFile(fileInput);
+
+    const CsvFile = Csv.init(file);
+    std.debug.print("CsvFile={any}", .{CsvFile});
 }
 
 fn loadFile(filePath: []const u8) !std.fs.File {
