@@ -5,25 +5,22 @@ const csvError = error {
     OpenError
 };
 
-const Csv = struct { 
+pub const Csv = struct { 
     path: []const u8,
     file: std.fs.File,
     header: bool = false,
 
-
-
     // APIs
     // 
-    pub fn init(file_path: []const u8) csvError!Csv {
+    pub fn init(file_path: []const u8, hasHeader: bool) csvError!Csv {
 
         const file = openFile(file_path) catch return csvError.OpenError;
-        // assert(file.Metadata
-        std.log.info("Opening file:{any}\n{any}\n", .{file, file.metadata()});
+        std.log.info("Opening file:{any}\n", .{file});
 
         return Csv{ 
             .path = file_path,
             .file = file,
-            .header = 
+            .header = hasHeader,
         };
     }
 
@@ -31,7 +28,7 @@ const Csv = struct {
         const reader = self.file.reader();
         var buf: [1024]u8 = undefined;
 
-        var line_num: usize = 1;
+        var line_num: usize = if (self.header) 0 else 1;
         while(try reader.readUntilDelimiterOrEof(&buf, '\n')) |line| {
             if (line_num <= lines or lines == 0) {
                 std.debug.print("{any}: {s}\n", .{line_num, line});
@@ -57,16 +54,16 @@ const Csv = struct {
 //
 
 test "can open sample file" {
-    _ = try Csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv");
+    _ = try Csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv", true);
 }
 
 test "output sample file to terminal" {
-    const file = try Csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv");
+    const file = try Csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv", true);
     try file.toTerminal(0);
 }
 
 test "output first 3 lines from sample file to terminal" {
-    const file = try Csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv");
+    const file = try Csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv", true);
     try file.toTerminal(3);
 }
 
