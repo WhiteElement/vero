@@ -25,6 +25,10 @@ pub const Csv = struct {
         };
     }
 
+    pub fn close(self: Csv) void {
+        self.file.close();
+    }
+
     pub fn toTerminal(self: Csv, lines: usize) !void {
         const reader = self.file.reader();
         var buf: [1024]u8 = undefined;
