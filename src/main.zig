@@ -5,6 +5,6 @@ const csv = @import("./Csv/Csv.zig").Csv;
 pub fn main() !void {
 
     const csv_file = try csv.init("/mnt/c/Entwicklung/zig/vero/src/data/username.csv", true); 
-    try csv_file.toTerminal(0); 
+    try csv_file.search("a");
 
 }

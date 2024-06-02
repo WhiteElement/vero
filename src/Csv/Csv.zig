@@ -10,6 +10,7 @@ pub const Csv = struct {
     file: std.fs.File,
     header: bool = false,
 
+    //
     // APIs
     // 
     pub fn init(file_path: []const u8, hasHeader: bool) csvError!Csv {
@@ -36,6 +37,17 @@ pub const Csv = struct {
             }
         }
 
+    }
+
+    pub fn search(self: Csv, phrase: []const u8) !void {
+        const reader = self.file.reader();
+        var buf: [1024]u8 = undefined;
+
+        while (try reader.readUntilDelimiterOrEof(&buf, '\n')) |line| {
+            if (std.mem.containsAtLeast(u8, line, 1, phrase)) {
+                std.debug.print("Match: {s}\n", .{line});
+            }
+        }
     }
 
     //
